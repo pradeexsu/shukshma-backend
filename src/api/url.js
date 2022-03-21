@@ -90,9 +90,13 @@ router.get("/:key", async (req, res) => {
       { $inc: { hitCount: 1 } },
       { new: true }
     ).then((res1) => {
-      console.log(res1);
-      const link = res1.link;
-      res.redirect(link.startsWith("http") ? link : `https://${link}`);
+      console.log("res", res1);
+      if (res1 === null) {
+        res.send({ msg: "invalid url" }).end();
+      } else {
+        const link = res1.link;
+        res.redirect(link.startsWith("http") ? link : `https://${link}`);
+      }
     });
   } catch (error) {
     res.json({

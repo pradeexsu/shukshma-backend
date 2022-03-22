@@ -26,9 +26,15 @@ router.get("/", async (req, res) => {
   try {
     const email = req.body.email;
     const links = await Link.find({ email: email });
-    res.json({ links });
+    res.json({
+      links: links,
+      status: "success",
+    });
   } catch (error) {
-    res.json({ msg: "error is there" });
+    res.json({
+      msg: "error is there",
+      status: "danger",
+    });
   }
 });
 
@@ -41,23 +47,25 @@ router.post("/", async (req, res) => {
     if (isDuplicateKey) {
       return res.json({
         msg: "duplicate key",
+        status: "warning",
       });
     } else {
       const urlData = { ...req.body };
       const link = new Link(urlData);
       link.save().then(async (feedback) => {
-        console.log(feedback);
+        console.log("feedback: ", feedback);
         res.json({
+          ...feedback,
           msg: "link created",
-          object: feedback,
+          status: "success",
         });
       });
     }
   } catch (err) {
-    res.json({ msg: "error is there" });
+    res.json({ msg: "error is there", status: "danger" });
   }
 });
-
+  
 router.delete("/", async (req, res) => {
   try {
     const { key } = req.body;
